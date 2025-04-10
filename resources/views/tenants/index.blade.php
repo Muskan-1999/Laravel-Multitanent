@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tenants') }}
-            <x-btn-link class="ml-4 float-right" href="{{route('tenants.create')}}">Add Tenant</x-btn-link>
-        </h2>
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight flex justify-between items-center">
+    {{ __('Tenants') }}
+    <x-btn-link href="{{ route('tenants.create') }}">Add Tenant</x-btn-link>
+</h2>
     </x-slot>
 
     <div class="py-12">
