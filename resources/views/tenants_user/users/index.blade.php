@@ -2,7 +2,9 @@
     <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight flex justify-between items-center">
     {{ __('Users') }}
+    @role('admin')
     <x-btn-link href="{{ route('users.create') }}">Add User</x-btn-link>
+    @endrole
 </h2>
     </x-slot>
 
@@ -41,12 +43,17 @@
                     {{$user->email}}
                 </td>
                 <td class="px-6 py-4">
-                @foreach($user->roles as $role)
-                        {{$role->name}} {{$loop->last? '' : ','}}
-                    @endforeach
+                    {{ implode(', ', $user->getRoleNames()->toArray()) }}
                 </td>
                 <td class="px-6 py-4">
-                    
+                    <div class="flex space-x-2">
+                        <a href="{{ route('users.edit', $user->id) }}" class="inline-flex items-center px-3 py-1 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Edit
+                        </a>
+                        <button onclick="deleteUser({{ $user->id }})" class="inline-flex items-center px-3 py-1 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Delete
+                        </button>
+                    </div>
                 </td>
             </tr>
             @endforeach
@@ -59,3 +66,30 @@
         </div>
     </div>
 </x-tenant-app-layout>
+
+<script>
+function deleteUser(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Create a form and submit it
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/users/${id}`;
+            form.innerHTML = `
+                @csrf
+                @method('DELETE')
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+</script>

@@ -9,7 +9,17 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                <form method="POST" action="{{ route('users.store') }}">
+                    @if (session('error'))
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <span class="block sm:inline">{{ session('error') }}</span>
+                        </div>
+                    @endif
+                    @if (session('success'))
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <span class="block sm:inline">{{ session('success') }}</span>
+                        </div>
+                    @endif
+                <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data">
         @csrf
 
         <!-- Name -->
@@ -55,9 +65,42 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Roles -->
+        <div class="mt-4">
+            <x-input-label :value="__('Roles')" />
+            <div class="mt-2 space-y-2">
+                <div class="flex items-center">
+                    <input type="checkbox" id="role_admin" name="roles[]" value="admin" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                    <label for="role_admin" class="ml-2 block text-sm text-gray-900">Admin</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="role_user" name="roles[]" value="user" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                    <label for="role_user" class="ml-2 block text-sm text-gray-900">User</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="role_manager" name="roles[]" value="manager" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                    <label for="role_manager" class="ml-2 block text-sm text-gray-900">Manager</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="role_publisher" name="roles[]" value="publisher" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                    <label for="role_publisher" class="ml-2 block text-sm text-gray-900">Publisher</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="role_writer" name="roles[]" value="writer" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                    <label for="role_writer" class="ml-2 block text-sm text-gray-900">Writer</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="role_hr" name="roles[]" value="hr" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                    <label for="role_hr" class="ml-2 block text-sm text-gray-900">HR</label>
+                </div>
+            </div>
+            <x-input-error :messages="$errors->get('roles')" class="mt-2" />
+        </div>
+
         <div class="flex items-center justify-end mt-4">
-
-
+            <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                {{ __('Cancel') }}
+            </a>
             <x-primary-button class="ms-4">
                 {{ __('Create') }}
             </x-primary-button>

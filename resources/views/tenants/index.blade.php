@@ -46,8 +46,13 @@
                     @endforeach
                   
                 </td>
-                <td class="px-6 py-4">
-                    
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <a href="{{ route('tenants.edit', $tenant->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="#" onclick="deleteTenant({{ $tenant->id }})" class="text-red-600 hover:text-red-900">
+                        <i class="fas fa-trash"></i>
+                    </a>
                 </td>
             </tr>
             @endforeach
@@ -60,3 +65,52 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    function deleteTenant(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/tenants/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire(
+                            'Deleted!',
+                            data.message,
+                            'success'
+                        ).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            data.message,
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while deleting the tenant.',
+                        'error'
+                    );
+                });
+            }
+        });
+    }
+</script>
