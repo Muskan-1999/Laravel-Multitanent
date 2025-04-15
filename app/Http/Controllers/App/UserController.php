@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view-users', ['only' => ['index']]);
+        $this->middleware('permission:create-users', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-users', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-users', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,6 +32,10 @@ class UserController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->hasPermissionTo('create-users')) {
+            return redirect()->route('users.index')
+                ->with('error', 'Unauthorized. You don\'t have permission to create users. Please talk with your administrator.');
+        }
         return view('tenants_user.users.create');
     }
 
@@ -32,6 +44,10 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->hasPermissionTo('create-users')) {
+            return redirect()->route('users.index')
+                ->with('error', 'Unauthorized. You don\'t have permission to create users. Please talk with your administrator.');
+        }
         try {
             $validateData = $request->validate([
                 'name'=>'required|string|max:255',
@@ -77,23 +93,26 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        $user = User::findOrFail($id);
+        if (!auth()->user()->hasPermissionTo('edit-users')) {
+            abort(403, 'Unauthorized action. You only have view permission.');
+        }
         return view('tenants_user.users.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
+        if (!auth()->user()->hasPermissionTo('edit-users')) {
+            abort(403, 'Unauthorized action. You only have view permission.');
+        }
         try {
-            $user = User::findOrFail($id);
-            
             $validateData = $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:users,email,' . $id,
+                'email' => 'required|email|max:255|unique:users,email,' . $user->id,
                 'password' => 'nullable|confirmed|min:8',
                 'roles' => 'array',
                 'roles.*' => 'string',
@@ -131,10 +150,12 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
+        if (!auth()->user()->hasPermissionTo('delete-users')) {
+            abort(403, 'Unauthorized action. You only have view permission.');
+        }
         try {
-            $user = User::findOrFail($id);
             $user->delete();
             
             session()->flash('success', 'User deleted successfully!');

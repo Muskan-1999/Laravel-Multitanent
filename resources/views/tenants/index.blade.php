@@ -26,7 +26,7 @@
                 <th scope="col" class="px-6 py-3">
                     Domain
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 text-right">
                     Action
                 </th>
             </tr>
@@ -44,10 +44,9 @@
                     @foreach($tenant->domains as $domain)
                         {{$domain->domain}} {{$loop->last? '' : ','}}
                     @endforeach
-                  
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="{{ route('tenants.edit', $tenant->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                <td class="px-6 py-4 flex justify-end space-x-3">
+                    <a href="{{ route('tenants.edit', $tenant->id) }}" class="text-indigo-600 hover:text-indigo-900">
                         <i class="fas fa-edit"></i>
                     </a>
                     <a href="#" onclick="deleteTenant({{ $tenant->id }})" class="text-red-600 hover:text-red-900">

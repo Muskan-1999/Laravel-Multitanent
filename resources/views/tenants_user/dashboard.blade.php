@@ -1,7 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex justify-between items-center">
             {{ __('Dashboard') }}
+            <div class="flex space-x-4">
+                <x-btn-link href="{{route('users.index')}}">Users</x-btn-link>
+                @role('admin')
+                <a href="{{route('settings.index')}}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <i class="fas fa-cog mr-2"></i>
+                    Settings
+                </a>
+                @endrole
+            </div>
         </h2>
     </x-slot>
 
@@ -10,9 +19,6 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }}
-                    @role('admin')
-                    <x-btn-link href="{{route('users.index')}}">User</x-btn-link>
-                    @endrole
                 </div>
             </div>
         </div>
